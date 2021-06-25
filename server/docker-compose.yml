@@ -1,0 +1,14 @@
+version: "2"
+services:
+  api:
+    build:
+      context: .
+    user: root
+    ports:
+      - "3333:3333"
+    volumes:
+      - "./shared:/shared"
+    environment:
+      GRANT_SUDO: "yes"
+    working_dir: "/shared"
+    command: "python server.py"
