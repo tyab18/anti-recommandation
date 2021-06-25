@@ -1,0 +1,136 @@
+openapi: 3.0.3
+info:
+  title: Comment API(仮)
+  version: 1.0.0
+servers:
+  - url: https://bd.tyab.ml/api/v1
+tags:
+  - name: Comment
+    description: "コメント関連"
+  - name: Question
+    description: "質問関連"
+  - name: Answer
+    description: "回答関連"
+
+paths:
+  /questions:
+    get:
+      tags:
+        - Question
+      description: 質問リストを取得
+      operationId: get_questions
+      responses:
+        200:
+          description: 質問一覧
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+  /points:
+    get:
+      tags:
+        - Comment
+      description: コメント位置リストを取得
+      operationId: get_points
+      responses:
+        200:
+          description: コメント位置一覧
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CommentPoint"
+
+  /comments:
+    get:
+      tags:
+        - Comment
+      description: 指定のidリストのコメントを取得
+      operationId: get_comments
+      parameters:
+      - $ref: "#/components/parameters/ids"
+      responses:
+        200:
+          description: コメントリスト
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Comment"
+
+  /answers:
+    post:
+      tags:
+        - Answer
+      operationId: post_answers
+      requestBody:
+        $ref: "#/components/requestBodies/Answer"
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Point"
+
+components:
+  parameters:
+    ids:
+      name: ids
+      description: "idリスト"
+      in: query
+      required: true
+      schema:
+        type: string
+      example: "1,3,7,6"
+  requestBodies:
+    Answer:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Answer"
+  schemas:
+    Answer:
+      type: object
+      required: [answers]
+      properties:
+        answers:
+          type: array
+          items:
+            type: string
+    Point:
+      type: array
+      items:
+        type: number
+        format: double
+    Comment:
+      type: object
+      required: [id, author, date, job, content]
+      properties:
+        id:
+          type: number
+          format: int32
+        author:
+          type: string
+        date:
+          type: string
+          format: date
+        job:
+          type: string
+        content:
+          type: string
+    CommentPoint:
+      type: object
+      required: [id, pos]
+      properties:
+        id:
+          type: number
+          format: int32
+        pos:
+          $ref: "#/components/schemas/Point"
